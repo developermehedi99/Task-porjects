@@ -1,6 +1,6 @@
 import { FaRegStar, FaStar } from "react-icons/fa6";
 
-const TaskList = ({ tasks, onEdit }) => {
+const TaskList = ({ tasks, onEdit, onDelete, onFav }) => {
   return (
     <div>
       <div className="overflow-auto">
@@ -31,19 +31,21 @@ const TaskList = ({ tasks, onEdit }) => {
             </tr>
           </thead>
           <tbody>
-            {tasks?.map((task, index) => (
+            {tasks?.map((task) => (
               <tr
-                key={index}
+                key={task.id}
                 className="border-b border-[#2E3443] [&>td]:align-baseline [&>td]:px-4 [&>td]:py-2"
               >
                 <td>
-                  {task.isFavorite ? (
-                    <span className="text-yellow-400">
-                      <FaStar></FaStar>
-                    </span>
-                  ) : (
-                    <FaRegStar></FaRegStar>
-                  )}
+                  <button onClick={() => onFav(task.id)}>
+                    {task.isFavorite ? (
+                      <span className="text-yellow-400">
+                        <FaStar></FaStar>
+                      </span>
+                    ) : (
+                      <FaRegStar></FaRegStar>
+                    )}
+                  </button>
                 </td>
                 <td>{task.title}</td>
                 <td>
@@ -63,7 +65,12 @@ const TaskList = ({ tasks, onEdit }) => {
                 <td className="text-center">{task.priority}</td>
                 <td>
                   <div className="flex items-center justify-center space-x-3">
-                    <button className="text-red-500">Delete</button>
+                    <button
+                      className="text-red-500"
+                      onClick={() => onDelete(task.id)}
+                    >
+                      Delete
+                    </button>
                     <button
                       onClick={() => onEdit(task)}
                       className="text-blue-500"

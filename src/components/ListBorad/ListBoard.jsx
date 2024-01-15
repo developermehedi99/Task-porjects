@@ -1,12 +1,13 @@
 import { useState } from "react";
 import AddTaskModal from "./AddTaskModal";
+import NoTaskFaund from "./NoTaskFaund";
 import SearchTask from "./SearchTask";
 import TaskAction from "./TaskAction";
 import TaskList from "./TaskList";
 
 const ListBoard = () => {
   const defaultTask = {
-    id: 1,
+    id: crypto.randomUUID(),
     title: "learn react",
     description:
       "I want to be a best react and next js in the world. my target is so high if i success i work very hardwork",
@@ -43,6 +44,29 @@ const ListBoard = () => {
     setShowTaskModal(false);
     setTaskUpdate(null);
   };
+  const handleDelete = (taskId) => {
+    const taskAfterDelete = tasks.filter((task) => task.id !== taskId);
+    setTasks(taskAfterDelete);
+  };
+  const onDeleteAll = () => {
+    tasks.length = 0;
+    setTasks([...tasks]);
+  };
+
+  const onFav = (taskId) => {
+    const taskIndex = tasks.findIndex((task) => task.id === taskId);
+    const newTasks = [...tasks];
+    newTasks[taskIndex].isFavorite = !newTasks[taskIndex].isFavorite;
+    setTasks(newTasks);
+  };
+
+  const handleSearch = (search) => {
+    console.log(search);
+    const filtered = tasks.filter((task) =>
+      task.title.toLowerCase().includes(search.toLowerCase())
+    );
+    setTasks([...filtered]);
+  };
 
   return (
     <section className="mb-20" id="tasks">
@@ -55,12 +79,24 @@ const ListBoard = () => {
       )}
       <div className="container">
         <div className="p-2 flex justify-end">
-          <SearchTask></SearchTask>
+          <SearchTask onSearch={handleSearch}></SearchTask>
         </div>
         <div className="rounded-xl border border-[rgba(206,206,206,0.12)] bg-[#1D212B] px-6 py-8 md:px-9 md:py-16">
-          <TaskAction hanldeAddTask={() => setShowTaskModal(true)}></TaskAction>
+          <TaskAction
+            hanldeAddTask={() => setShowTaskModal(true)}
+            onDeleteAll={onDeleteAll}
+          ></TaskAction>
 
-          <TaskList tasks={tasks} onEdit={handleEdit}></TaskList>
+          {tasks.length > 0 ? (
+            <TaskList
+              tasks={tasks}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onFav={onFav}
+            ></TaskList>
+          ) : (
+            <NoTaskFaund></NoTaskFaund>
+          )}
         </div>
       </div>
     </section>
